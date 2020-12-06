@@ -1,15 +1,15 @@
 # Annoying Mute Line
 A very simple [LADSPA](http://www.ladspa.org/) plugin that mutes audio for specified time at specified intervals. It takes two parameters:
-- *Mute Interval:* The time in seconds to wait inbetween the mute attempts
-- *Mute Length:* The time in seconds for how long the audio will be muted
+- **Mute Interval:** The time in seconds to wait inbetween the mute attempts
+- **Mute Length:** The time in seconds for how long the audio will be muted
 
 For example if we call this filter on the audio below with `mute length` to be 1 second and `mute interval` to be 2 seconds:
 
-[Before](images/before.png)
+![Before](images/before.png)
 
 It will result as:
 
-[After](images/after.png)
+![After](images/after.png)
 
 ## Compiling 
 
@@ -55,7 +55,7 @@ First go to `Effect`->`Add/Remove Plugins` and enable Annoying Mute Line. Then y
 
 ### Pulseaudio
 
-Pulseaudio also supports LADSPA plugins. For example, to temper output audio run:
+Pulseaudio also supports LADSPA plugins. For example to temper output audio, run:
 
 ```sh
 pacmd load-module module-ladspa-sink sink_name=amute plugin=mute label=mute_n control=<mute interval>,<mute length>
