@@ -62,3 +62,5 @@ pacmd load-module module-ladspa-sink sink_name=amute plugin=mute label=mute_n co
 pacmd set-default-sink amute
 ```
 
+## Note
+You can read a detailed explanation of the code [here](https://0x90.psaux.io/2020/12/07/How-To-Write-A-LADSPA-Plugin/).
