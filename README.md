@@ -35,7 +35,7 @@ sudo make install
 
 ## Usage
 
-You can use this plugin with any LADSPA host. If you haven't installed the plugin, you may be need add the directory that contains `mute.so` to `LADSPA_PATH`:
+You can use this plugin with any LADSPA host. If you haven't installed the plugin, you may need to add the directory that contains `mute.so` to `LADSPA_PATH`:
 
 ```sh
 export LADSPA_PATH=.
