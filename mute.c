@@ -13,20 +13,22 @@
 #define MUTED   0
 #define UNMUTED !MUTED
 
+// LADSPA_Handle
 typedef struct {
     unsigned long sampleRate;
 
     unsigned int muteInterval; // in seconds
     unsigned int muteLength;   // in seconds
 
-    LADSPA_Data *inputBuffer;
-    LADSPA_Data *outputBuffer;
+    LADSPA_Data *inputBuffer; // pointer to input buffer
+    LADSPA_Data *outputBuffer; // pointer to output buffer
 
-    unsigned long remaining;
-    unsigned int state;
+    unsigned long remaining; // how many samples are remained before I change state
+    unsigned int state; // muted or unmuted
 } AnnoyingMuteLine;
 
-static LADSPA_Handle initiateMuteLine(const LADSPA_Descriptor *descriptor,
+// handle new instance
+static LADSPA_Handle instantiateMuteLine(const LADSPA_Descriptor *descriptor,
                                       unsigned long sampleRate) {
 
     AnnoyingMuteLine *muteLine;
@@ -42,13 +44,7 @@ static LADSPA_Handle initiateMuteLine(const LADSPA_Descriptor *descriptor,
     return muteLine;
 }
 
-static void activateMuteLine(LADSPA_Handle handle) {
-    AnnoyingMuteLine *muteLine = (AnnoyingMuteLine *)handle;
-
-    muteLine->state = MUTED;
-    muteLine->remaining = 0;
-}
-
+// Assign given parameters accordingly in handle
 static void connectPort(LADSPA_Handle handle, unsigned long port, LADSPA_Data *data) {
     AnnoyingMuteLine *muteLine = (AnnoyingMuteLine *) handle;
 
@@ -68,6 +64,15 @@ static void connectPort(LADSPA_Handle handle, unsigned long port, LADSPA_Data *d
     }
 }
 
+// initialize the state
+static void activateMuteLine(LADSPA_Handle handle) {
+    AnnoyingMuteLine *muteLine = (AnnoyingMuteLine *)handle;
+
+    muteLine->state = MUTED;
+    muteLine->remaining = 0;
+}
+
+// main handler. forward samples or mute according to state
 static void runMuteLine(LADSPA_Handle handle, unsigned long sampleCount) {
     AnnoyingMuteLine *muteLine = (AnnoyingMuteLine *) handle;
 
@@ -94,6 +99,7 @@ static void runMuteLine(LADSPA_Handle handle, unsigned long sampleCount) {
     }
 }
 
+// free the handle
 static void cleanupMuteLine(LADSPA_Handle handle) {
     AnnoyingMuteLine *muteLine = (AnnoyingMuteLine *) handle;
 
@@ -102,6 +108,7 @@ static void cleanupMuteLine(LADSPA_Handle handle) {
 
 static LADSPA_Descriptor *descriptor = NULL;
 
+// On plugin load
 static void __attribute__ ((constructor)) init() {
     LADSPA_PortDescriptor * portDescriptors;
     LADSPA_PortRangeHint * portRangeHints;
@@ -151,7 +158,7 @@ static void __attribute__ ((constructor)) init() {
 
     descriptor->PortRangeHints = portRangeHints;
 
-    descriptor->instantiate = initiateMuteLine;
+    descriptor->instantiate = instantiateMuteLine;
     descriptor->connect_port = connectPort;
     descriptor->activate = activateMuteLine;
     descriptor->run = runMuteLine;
@@ -161,6 +168,7 @@ static void __attribute__ ((constructor)) init() {
     descriptor->cleanup = cleanupMuteLine;
 }
 
+// On plugin unload
 static void __attribute__ ((destructor)) fini() {
     if (descriptor == NULL) return;
 
@@ -178,6 +186,7 @@ static void __attribute__ ((destructor)) fini() {
     free(descriptor);
 }
 
+// we only have one type of plugin
 const LADSPA_Descriptor * ladspa_descriptor(unsigned long index) {
     if (index != 0) {
         return NULL;
