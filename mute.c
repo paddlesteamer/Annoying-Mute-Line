@@ -23,7 +23,7 @@ typedef struct {
     LADSPA_Data *inputBuffer; // pointer to input buffer
     LADSPA_Data *outputBuffer; // pointer to output buffer
 
-    unsigned long remaining; // how many samples are remained before I change state
+    unsigned long remaining; // how many samples are remained before we change the state
     unsigned int state; // muted or unmuted
 } AnnoyingMuteLine;
 
